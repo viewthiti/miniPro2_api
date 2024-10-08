@@ -121,7 +121,7 @@ class FileMiddleware {
 
 //POST/Upload
 const fileUpload = new FileMiddleware();
-router.post("/", fileUpload.diskLoader.single("file"), async (req, res) => {
+router.post("/upload/", fileUpload.diskLoader.single("file"), async (req, res) => {
   // 2.uplaod file to firebase
   //Genarate filename
   const filename =

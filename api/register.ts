@@ -135,7 +135,7 @@ router.post("/register", fileUpload.diskLoader.single("file"), async (req, res) 
   conn.query(checkphoneSql, async (err, results) => {
     if (err) {
       console.error("Error checking phone number:", err);
-      return res.status(500).json({ error: "Internal server error." });
+      return res.status(600).json({ error: "Internal server error." });
     }
 
     if (results.length > 0) {
@@ -191,7 +191,7 @@ router.post("/register", fileUpload.diskLoader.single("file"), async (req, res) 
       conn.query(sql, (err, result) => {
         if (err) {
           console.error("Error inserting user:", err);
-          return res.status(500).json({ error: "Error registering user." });
+          return res.status(501).json({ error: "Error registering user." });
         }
 
         // ส่งผลลัพธ์กลับเมื่อการลงทะเบียนสำเร็จ

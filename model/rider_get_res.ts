@@ -4,4 +4,5 @@ export interface Rider {
     password: string;
     number: string;
     image:  string;
+    confirmPassword: string;
 }

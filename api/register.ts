@@ -134,15 +134,18 @@ router.post("/upload", fileUpload.diskLoader.single("file"), async (req, res) =>
     contentType: req.file!.mimetype,
   };
   //upload
-  const snapshot = await uploadBytesResumable(
-    storageRef,
-    req.file!.buffer,
-    metadata
-  );
-
-  const url = await getDownloadURL(snapshot.ref);
-  res.status(200).json({
-    url: url,
-  });
-  console.log(req.file);
+  try {
+    const snapshot = await uploadBytesResumable(
+      storageRef,
+      req.file!.buffer,
+      metadata
+    );
+    const url = await getDownloadURL(snapshot.ref);
+    res.status(200).json({
+      url: url,
+    });
+  } catch (error) {
+    console.error('Error uploading to Firebase:', error);
+    res.status(500).send('Error uploading file');
+  }  
 });

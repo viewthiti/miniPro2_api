@@ -17,6 +17,7 @@ router.get("/Users", (req, res) => {
 //Firebase
 // 1.connect filebase
 import { initializeApp } from "firebase/app";
+
 import {
   getStorage,
   ref,
@@ -250,3 +251,124 @@ router.post(
     });
   }
 );
+
+// การลบ Users
+router.delete("/deleteuser/:usersID", async (req, res) => {
+  const usersID = req.params.usersID;
+
+  let sql = `SELECT image FROM Users WHERE userID = ?`;
+  sql = mysql.format(sql, [usersID]);
+
+  conn.query(sql, async (err, results) => {
+    if (err) {
+      console.error("Error fetching user:", err);
+      return res.status(500).json({ error: "Internal server error." });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ error: "User not found." });
+    }
+
+    const imageUrl = results[0].image; // ดึง URL ของรูปภาพ
+
+    // ตรวจสอบว่า imageUrl มีค่าไหม
+    if (imageUrl && imageUrl !== "undefined") {
+      try {
+        // Debug: ดูว่า imageUrl เป็นอะไร
+        console.log("Image URL: ", imageUrl);
+
+        // ดึงชื่อไฟล์จาก URL โดยใช้ decodeURIComponent และ split
+        const filePath = decodeURIComponent(imageUrl.split('images%2F')[1].split('?')[0]);
+
+        // Debug: ดูว่า filename ที่ได้เป็นอะไร
+        console.log("Filename: ", filePath);
+
+        const storageRef = ref(storage, `/images/${filePath}`);
+
+        // ลบไฟล์ใน Firebase Storage
+        await deleteObject(storageRef);
+        console.log("Image deleted from Firebase.");
+      } catch (error) {
+        console.error("Error deleting image from Firebase:", error);
+        return res.status(509).json({ error: "Error deleting image." });
+      }
+    } else {
+      console.log("No image found for this user.");
+    }
+
+    // ลบผู้ใช้จากฐานข้อมูล
+    let deleteUserSql = `DELETE FROM Users WHERE userID = ?`;
+    deleteUserSql = mysql.format(deleteUserSql, [usersID]);
+
+    conn.query(deleteUserSql, (err, result) => {
+      if (err) {
+        console.error("Error deleting user:", err);
+        return res.status(500).json({ error: "Error deleting user." });
+      }
+
+      return res.status(200).json({ message: "User and image deleted successfully." });
+    });
+  });
+});
+
+
+// การลบ Rider
+router.delete("/deleterider/:usersID", async (req, res) => {
+  const usersID = req.params.usersID;
+
+  let sql = `SELECT image FROM rider WHERE riderID = ?`;
+  sql = mysql.format(sql, [usersID]);
+
+  conn.query(sql, async (err, results) => {
+    if (err) {
+      console.error("Error fetching user:", err);
+      return res.status(500).json({ error: "Internal server error." });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ error: "User not found." });
+    }
+
+    const imageUrl = results[0].image; // ดึง URL ของรูปภาพ
+
+    // ตรวจสอบว่า imageUrl มีค่าไหม
+    if (imageUrl && imageUrl !== "undefined") {
+      try {
+        // Debug: ดูว่า imageUrl เป็นอะไร
+        console.log("Image URL: ", imageUrl);
+
+        // ดึงชื่อไฟล์จาก URL โดยใช้ decodeURIComponent และ split
+        const filePath = decodeURIComponent(imageUrl.split('images%2F')[1].split('?')[0]);
+
+        // Debug: ดูว่า filename ที่ได้เป็นอะไร
+        console.log("Filename: ", filePath);
+
+        const storageRef = ref(storage, `/images/${filePath}`);
+
+        // ลบไฟล์ใน Firebase Storage
+        await deleteObject(storageRef);
+        console.log("Image deleted from Firebase.");
+      } catch (error) {
+        console.error("Error deleting image from Firebase:", error);
+        return res.status(509).json({ error: "Error deleting image." });
+      }
+    } else {
+      console.log("No image found for this user.");
+    }
+
+    // ลบผู้ใช้จากฐานข้อมูล
+    let deleteUserSql = `DELETE FROM rider WHERE riderID = ?`;
+    deleteUserSql = mysql.format(deleteUserSql, [usersID]);
+
+    conn.query(deleteUserSql, (err, result) => {
+      if (err) {
+        console.error("Error deleting user:", err);
+        return res.status(500).json({ error: "Error deleting user." });
+      }
+
+      return res.status(200).json({ message: "User and image deleted successfully." });
+    });
+  });
+});
+
+

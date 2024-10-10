@@ -3,6 +3,7 @@ import { router as test } from "./api/test";
 import cors from "cors";
 import { router as register } from "./api/register";
 import { router as login } from "./api/login";
+import { router as users } from "./api/users";
 
 import bodyParser from "body-parser";
 
@@ -26,3 +27,4 @@ app.use(
   app.use("/", test);
   app.use("/", register);
   app.use("", login);
+  app.use("/users", users);

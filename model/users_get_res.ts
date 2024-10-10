@@ -3,8 +3,8 @@ export interface Users {
     name: string;
     password: string;
     address: string;
-    lat: string;
-    long:string;
+    lat: number;
+    long:number;
     image:  string;
     confirmPassword: string;
 }
